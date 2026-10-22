@@ -1,0 +1,13 @@
+{
+  "name": "cloud-extractor",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "puppeteer": "^22.15.0",
+    "adm-zip": "^0.5.12"
+  }
+}
