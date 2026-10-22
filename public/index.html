@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Web Extractor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>body { background: #0f0f13; color: #fff; font-family: sans-serif; }</style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-gray-800 p-8 rounded-xl w-full max-w-lg shadow-2xl border border-gray-700">
+        <h1 class="text-2xl font-bold text-center mb-6 text-purple-400">Cloud Web Extractor</h1>
+        <form id="form" class="space-y-4">
+            <input type="url" id="url" placeholder="https://example.com" required class="w-full p-3 rounded bg-gray-900 border border-gray-600 focus:outline-none focus:border-purple-500 text-white">
+            <button type="submit" id="btn" class="w-full p-3 bg-purple-600 hover:bg-purple-700 rounded font-bold transition">Extract Code</button>
+        </form>
+        <p id="msg" class="text-center mt-4 text-sm text-gray-400"></p>
+    </div>
+    <script>
+        document.getElementById('form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn');
+            const msg = document.getElementById('msg');
+            btn.innerText = 'Extracting... (Wait 30s)';
+            btn.disabled = true;
+            msg.innerText = 'Rendering JS & downloading files...';
+
+            try {
+                const res = await fetch('/extract', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: document.getElementById('url').value })
+                });
+                if(!res.ok) throw new Error('Failed');
+                const blob = await res.blob();
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'source_code.zip';
+                a.click();
+                msg.innerText = 'Downloaded successfully!';
+                msg.className = 'text-center mt-4 text-sm text-green-400';
+            } catch(err) {
+                msg.innerText = 'Error extracting site. Check if target blocks bots.';
+                msg.className = 'text-center mt-4 text-sm text-red-400';
+            }
+            btn.innerText = 'Extract Code';
+            btn.disabled = false;
+        };
+    </script>
+</body>
+</html>
